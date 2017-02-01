@@ -48,6 +48,9 @@ public class CrimeFragment extends Fragment {
     private Button mSuspectButton;
     private ImageButton mPhotoButton;
     private ImageView mPhotoView;
+    private ImageView mPhotoView2;
+    private ImageView mPhotoView3;
+    private ImageView mPhotoView4;
 
     public static CrimeFragment newInstance(UUID crimeId) {
         Bundle args = new Bundle();
@@ -173,6 +176,9 @@ public class CrimeFragment extends Fragment {
         });
 
         mPhotoView = (ImageView) v.findViewById(R.id.crime_photo);
+        mPhotoView2 = (ImageView) v.findViewById(R.id.crime_photo2);
+        mPhotoView3 = (ImageView) v.findViewById(R.id.crime_photo3);
+        mPhotoView4 = (ImageView) v.findViewById(R.id.crime_photo4);
         updatePhotoView();
 
         return v;
@@ -251,6 +257,10 @@ public class CrimeFragment extends Fragment {
         if (mPhotoFile == null || !mPhotoFile.exists()) {
             mPhotoView.setImageDrawable(null);
         } else {
+            mPhotoView4.setImageDrawable(mPhotoView3);
+            mPhotoView3.setImageDrawable(mPhotoView2);
+            mPhotoView2.setImageDrawable(mPhotoView);
+
             Bitmap bitmap = PictureUtils.getScaledBitmap(
                     mPhotoFile.getPath(), getActivity());
             mPhotoView.setImageBitmap(bitmap);
