@@ -41,6 +41,7 @@ public class CrimeFragment extends Fragment {
 
     private Crime mCrime;
     private File mPhotoFile;
+    private File tempPhotoFile;
     private EditText mTitleField;
     private Button mDateButton;
     private CheckBox mSolvedCheckbox;
@@ -225,6 +226,7 @@ public class CrimeFragment extends Fragment {
                 c.close();
             }
         } else if (requestCode == REQUEST_PHOTO) {
+
             updatePhotoView();
         }
     }
@@ -257,10 +259,9 @@ public class CrimeFragment extends Fragment {
         if (mPhotoFile == null || !mPhotoFile.exists()) {
             mPhotoView.setImageDrawable(null);
         } else {
-            mPhotoView4.setImageDrawable(mPhotoView3);
-            mPhotoView3.setImageDrawable(mPhotoView2);
-            mPhotoView2.setImageDrawable(mPhotoView);
-
+            mPhotoView4.setImageDrawable(mPhotoView3.getDrawable());
+            mPhotoView3.setImageDrawable(mPhotoView2.getDrawable());
+            mPhotoView2.setImageDrawable(mPhotoView.getDrawable());
             Bitmap bitmap = PictureUtils.getScaledBitmap(
                     mPhotoFile.getPath(), getActivity());
             mPhotoView.setImageBitmap(bitmap);

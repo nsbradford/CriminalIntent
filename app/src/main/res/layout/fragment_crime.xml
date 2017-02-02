@@ -43,4 +43,32 @@
         android:text="@string/crime_report_text"
         />
 
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView android:id="@+id/crime_photo2"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:scaleType="centerInside"
+            android:background="@android:color/darker_gray"
+            android:cropToPadding="false" />
+
+        <ImageView android:id="@+id/crime_photo3"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:scaleType="centerInside"
+            android:background="@android:color/darker_gray"
+            />
+
+        <ImageView android:id="@+id/crime_photo4"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:scaleType="centerInside"
+            android:background="@android:color/darker_gray"
+            />
+
+    </LinearLayout>
+
 </LinearLayout>
