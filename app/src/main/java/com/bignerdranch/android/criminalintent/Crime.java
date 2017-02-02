@@ -1,5 +1,7 @@
 package com.bignerdranch.android.criminalintent;
 
+import android.widget.ImageView;
+
 import java.util.Date;
 import java.util.UUID;
 
@@ -10,6 +12,10 @@ public class Crime {
     private Date mDate;
     private boolean mSolved;
     private String mSuspect;
+    private ImageView mPhoto2;
+    private ImageView mPhoto3;
+    private ImageView mPhoto4;
+
 
     public Crime() {
         this(UUID.randomUUID());
