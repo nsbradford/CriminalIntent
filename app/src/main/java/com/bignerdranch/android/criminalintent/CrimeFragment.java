@@ -6,6 +6,11 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -15,6 +20,8 @@ import android.support.v4.app.FragmentManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
+import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +37,17 @@ import android.widget.TextView;
 import java.io.File;
 import java.util.Date;
 import java.util.UUID;
+
+import com.google.android.gms.vision.Frame;
+import com.google.android.gms.vision.face.Face;
+import com.google.android.gms.vision.face.FaceDetector;
+//import com.google.android.gms.vision.face.Face;
+//import com.google.android.gms.vision.MultiProcessor;
+//import com.google.android.gms.vision.Tracker;
+//import com.google.android.gms.vision.text.Text;
+//import com.google.android.gms.samples.vision.face.facetracker.ui.camera.GraphicOverlay;
+
+
 
 public class CrimeFragment extends Fragment {
 
@@ -56,6 +74,7 @@ public class CrimeFragment extends Fragment {
     private CheckBox mCheckBox;
     private TextView mTextView;
     private int numFacesInLastImage;
+    private FaceDetector detector;
 
     public static CrimeFragment newInstance(UUID crimeId) {
         Bundle args = new Bundle();
@@ -94,8 +113,11 @@ public class CrimeFragment extends Fragment {
                                                  }
                                              }
         );
-//        FaceDetector detector = new FaceDetector.Builder(getActivity().getApplicationContext())
-//                .build();
+        detector = new FaceDetector.Builder(getActivity().getApplicationContext())
+                .setTrackingEnabled(false)
+                .setLandmarkType(FaceDetector.ALL_LANDMARKS)
+                .setMode(FaceDetector.ACCURATE_MODE)
+                .build();
     }
 
 
@@ -285,6 +307,7 @@ public class CrimeFragment extends Fragment {
     }
 
     private void updatePhotoView() {
+        Log.w("tag", "update photo view...");
         if (mPhotoFile == null || !mPhotoFile.exists()) {
             mPhotoView.setImageDrawable(null);
         } else {
@@ -294,7 +317,62 @@ public class CrimeFragment extends Fragment {
             Bitmap bitmap = PictureUtils.getScaledBitmap(
                     mPhotoFile.getPath(), getActivity());
             mPhotoView.setImageBitmap(bitmap);
+            updateFaceDetection(bitmap);
+        }
 
+    }
+
+    private void updateFaceDetection(Bitmap oldBitmap) {
+//        Bitmap bitmap = Bitmap.createBitmap(oldBitmap);
+
+        Bitmap bitmap = rotateBitmap(oldBitmap.copy(Bitmap.Config.ARGB_8888, true));
+
+        Log.w("tag", "update face detection...");
+        Frame outputFrame = new Frame.Builder().setBitmap(bitmap).build();
+
+        if (outputFrame == null) {
+            return;
+        }
+
+        SparseArray<Face> mFaces = detector.detect(outputFrame);
+        numFacesInLastImage = mFaces.size();
+
+        Canvas canvas = new Canvas(bitmap);
+        drawFaceBox(canvas, mFaces);
+        mPhotoView.setImageBitmap(bitmap);
+    }
+
+    private Bitmap rotateBitmap(Bitmap bitmap) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(90);
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+    }
+
+    private void drawFaceBox(Canvas canvas, SparseArray<Face> mFaces) {
+        //paint should be defined as a member variable rather than
+        //being created on each onDraw request, but left here for
+        //emphasis.
+
+        double scale = 1.0;
+        Paint paint = new Paint();
+        paint.setColor(Color.GREEN);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(10);
+
+        float left = 0;
+        float top = 0;
+        float right = 0;
+        float bottom = 0;
+
+        for( int i = 0; i < mFaces.size(); i++ ) {
+            Face face = mFaces.valueAt(i);
+
+            left = (float) ( face.getPosition().x * scale );
+            top = (float) ( face.getPosition().y * scale );
+            right = (float) scale * ( face.getPosition().x + face.getWidth() );
+            bottom = (float) scale * ( face.getPosition().y + face.getHeight() );
+
+            canvas.drawRect( left, top, right, bottom, paint );
         }
     }
 }
