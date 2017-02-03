@@ -90,6 +90,24 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
 
+        <CheckBox
+            android:text="@string/enable_face_detection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/crime_photo2"
+            android:id="@+id/checkBox_faceDetection"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:text=""
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/checkBox_faceDetection"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:id="@+id/textView_faceDetection" />
+
     </RelativeLayout>
 
 </LinearLayout>

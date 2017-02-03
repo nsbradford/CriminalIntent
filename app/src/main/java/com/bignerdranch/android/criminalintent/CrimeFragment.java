@@ -25,6 +25,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.io.File;
 import java.util.Date;
@@ -34,6 +35,7 @@ public class CrimeFragment extends Fragment {
 
     private static final String ARG_CRIME_ID = "crime_id";
     private static final String DIALOG_DATE = "DialogDate";
+    private static final String FACES_DETECTED = " Faces Detected";
 
     private static final int REQUEST_DATE = 0;
     private static final int REQUEST_CONTACT = 1;
@@ -51,6 +53,9 @@ public class CrimeFragment extends Fragment {
     private ImageView mPhotoView2;
     private ImageView mPhotoView3;
     private ImageView mPhotoView4;
+    private CheckBox mCheckBox;
+    private TextView mTextView;
+    private int numFacesInLastImage;
 
     public static CrimeFragment newInstance(UUID crimeId) {
         Bundle args = new Bundle();
@@ -68,6 +73,31 @@ public class CrimeFragment extends Fragment {
         mCrime = CrimeLab.get(getActivity()).getCrime(crimeId);
         mPhotoFile = CrimeLab.get(getActivity()).getPhotoFile(mCrime);
     }
+
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        numFacesInLastImage = 0;
+        mCheckBox = (CheckBox) getView().findViewById(R.id.checkBox_faceDetection);
+        mTextView = (TextView) getView().findViewById(R.id.textView_faceDetection);
+        mCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                                                 @Override
+                                                 public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
+                                                     if (isChecked) {
+                                                         String displayString = numFacesInLastImage + FACES_DETECTED;
+                                                         mTextView.setText(displayString);
+                                                     }
+                                                     else {
+                                                         mTextView.setText("");
+                                                     }
+                                                 }
+                                             }
+        );
+//        FaceDetector detector = new FaceDetector.Builder(getActivity().getApplicationContext())
+//                .build();
+    }
+
 
     @Override
     public void onPause() {
